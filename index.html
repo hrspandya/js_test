@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+</body>
+
+<!-- <script src="app.js"></script> -->
+<script type="text/javascript">
+	"use strict"
+	function Person(name, surname){
+		this.name = name;
+		this.surname = surname;
+	}
+	
+	var p1 = new Person("John", "Smith");
+
+	/*
+		===============================================
+	*/
+
+	function TheatreSeats1(){
+		this.seats = [];
+		this.maxSize = 10;
+	}
+
+	TheatreSeats1.prototype.placePerson = function(person){
+		this.seats.push(person);
+	}
+
+	TheatreSeats1.prototype.countOccupiedSeats = function(){
+		return this.seats.length;
+	}
+
+	TheatreSeats1.prototype.isSoldOut = function(){
+		return this.seats.length >= this.maxSize;
+	}
+
+	var t1 = new TheatreSeats1();
+	t1.placePerson(p1);
+	debugger;
+
+	/*
+		Above code is valid and looks good at most part. but we are using member properties and they are public and accessible outside, 
+		this can be a problem since developer can easily mess up the this.seats and introduce a bug if they are not very careful.
+
+		Best thing to do is to make the variables private and expose only things which needs to be accessible outside as ab API.
+		===============================================
+	*/
+
+
+
+
+
+
+
+	/*
+		===============================================
+	*/	
+
+	function TheatreSeats2(){
+		"use strict"
+		var seats = [];
+		this.maxSize = 10;
+		
+		this.countOccupiedSeats = function(){
+			return seats.length;
+		}
+
+		this.isSoldOut = function(){
+			return seats.length >= this.maxSize;
+		}
+	}
+
+	TheatreSeats2.prototype.placePerson = function(person){
+		debugger;
+		//seats.push(person);	//important: EXCEPTION will be thrown here since seats can not be accessed here since its private
+	}
+
+	debugger;
+	var t2 = new TheatreSeats2();
+	t2.placePerson(p1);
+
+	/*
+		Now that we want to make seats private so that its not manipulated by developer accidently, this creates a drawback, now
+		we have to use member functions because seats is only accessible within the class and can not be accessed in prototype.
+		This is problem because using member variables or methods will create separate copy for each object which prototype methods are accessible by all objects, so memory issue can occur.
+		===============================================
+	*/
+
+
+
+
+
+
+	/*
+		===============================================
+	*/	
+
+	var TheatreSeats3 = (function(){
+		"use strict"
+		var seats = [];
+
+		function TheatreSeats3(){			
+			this.maxSize = 10;
+		}
+
+		TheatreSeats3.prototype.placePerson = function(person){
+			seats.push(person);
+		}
+
+		TheatreSeats3.prototype.countOccupiedSeats = function(){
+			return seats.length;
+		}
+
+		TheatreSeats3.prototype.isSoldOut = function(){
+			return seats.length >= this.maxSize;
+		}
+
+		return TheatreSeats3;
+
+	})();
+
+	debugger;
+	var t3_1 = new TheatreSeats3();
+	console.log(t3_1.countOccupiedSeats());
+	t3_1.placePerson(p1);
+	console.log(t3_1.countOccupiedSeats());
+
+	var t3_2 = new TheatreSeats3();
+	console.log(t3_2.countOccupiedSeats());
+	
+	/*
+		Now to avoid using member methods and causing memory issue, we started using self invocking function and declared private 
+		variables outside of the constructor this will create closure and seats will be accessible by all prototype methods even after 
+		TheatreSeats3 done executing.
+
+		IMPORTANT:  But since closure is making seats accessible by all objects, it creates a problem where seats is specific to perticular object. 
+
+		For example: 
+		as Shown above, countOccupiedSeats is returning 9 for t3_1 object, but when we create new object t3_2 then that also has countOccupiedSeats updated. which means seats is not being set per object, but for every object which defets the purpose of objects itself.
+		===============================================
+	*/
+
+
+
+
+
+
+
+
+
+	/*
+		===============================================
+	*/	
+
+	var TheatreSeats4 = (function(){
+		"use strict"
+		var priv = new WeakMap();
+
+		function TheatreSeats4(){			
+			var privateMembers = {
+				seats : []
+			};
+
+			priv.set(this, privateMembers);
+
+			this.maxSize = 10;
+		}
+
+		TheatreSeats4.prototype.placePerson = function(person){
+			priv.get(this).seats.push(person);
+		}
+
+		TheatreSeats4.prototype.countOccupiedSeats = function(){
+			return priv.get(this).seats.length;
+		}
+
+		TheatreSeats4.prototype.isSoldOut = function(){
+			return priv.get(this).seats.length >= this.maxSize;
+		}
+
+		return TheatreSeats4;
+
+	})();
+
+	debugger;
+	var t4_1 = new TheatreSeats4();
+	console.log(t4_1.countOccupiedSeats());
+	t4_1.placePerson(p1);
+	console.log(t4_1.countOccupiedSeats());
+
+	var t4_2 = new TheatreSeats4();
+	console.log(t4_2.countOccupiedSeats());
+	
+	/*
+		To solve the issue of seats being manipulated by all objects at once, we can use weakMap which will make sure that seats are per object basis. and it solves the issue we had in TheatreSeats3
+		===============================================
+	*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*
+		===============================================
+	*/	
+
+	class TheatreSeats5{		
+		
+		//var seats = [];,  Exception, U can not do that in ES6 class, you can not private variable like we used to in previous example
+
+		constructor(){	
+			var seats = [];		
+			this.maxSize = 10;
+		}
+
+		placePerson(person){
+			seats.push(person);
+		}
+
+		countOccupiedSeats(){
+			//return seats.length; //EXCEPTION, since seats is private and can not be accessed in the other member functions
+		}
+
+		isSoldOut(){
+			return seats.length >= this.maxSize;
+		}
+
+	}
+
+	debugger;
+	var t5_1 = new TheatreSeats5();
+	console.log(t5_1.countOccupiedSeats());	
+
+	
+	/*
+		So in ES6 class you can not provide any private variables which are accessible to whole class/
+		Also here seats being private variable it is not accessible in other member methods.
+		So we still have to do similar thing as TheatreSeats4.
+		===============================================
+	*/
+
+
+
+
+
+
+
+
+
+
+
+	/*
+		===============================================
+	*/	
+
+	var TheatreSeats6 = (function(){
+
+		var priv = new WeakMap();
+
+		class TheatreSeats6{		
+		
+			constructor(){	
+				var privateMembers = {
+					seats : []
+				};
+
+				priv.set(this, privateMembers);
+				this.maxSize = 10;
+			}
+
+			placePerson(person){
+				priv.get(this).seats.push(person);
+			}
+
+			countOccupiedSeats(){
+				return priv.get(this).seats.length;
+			}
+
+			isSoldOut(){
+				return priv.get(this).seats.length >= this.maxSize;
+			}
+
+		}
+
+		return TheatreSeats6;
+
+	})();
+
+	debugger;
+	var t6_1 = new TheatreSeats6();
+	console.log(t6_1.countOccupiedSeats());	
+	t6_1.placePerson(p1);
+	console.log(t6_1.countOccupiedSeats());	
+
+	var t6_2 = new TheatreSeats6();
+	console.log(t6_2.countOccupiedSeats());	
+
+
+	
+	/*
+		So in ES6 class you can not provide any private variables which are accessible to whole class/
+		Also here seats being private variable it is not accessible in other member methods.
+		So we still have to do similar thing as TheatreSeats4.
+		===============================================
+	*/
+
+
+
+
+
+
+
+
+
+
+	var  TheatreSeats = (function() {
+		"use strict";
+		var priv = new WeakMap();
+		var _= function(instance) {return priv.get(instance);};
+		
+		class TheatreSeatsClass {
+		
+			constructor() {
+				var privateMembers = {seats: []};
+				priv.set(this, privateMembers);
+				this.maxSize = 10;
+			}
+
+			placePerson(person) {
+				_(this).seats.push(person);
+			}
+			countOccupiedSeats() {
+				return _(this).seats.length;
+			}
+			isSoldOut() {
+				return _(this).seats.length >= this.maxSize;
+			}
+			countFreeSeats() {
+				return this.maxSize - _(this).seats.length;
+			} 
+		}
+
+			return  TheatreSeatsClass;
+			
+		}());
+
+	debugger;
+
+
+</script>
+
+</html>
