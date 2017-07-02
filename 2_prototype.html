@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+	<script type="text/javascript">
+
+		var person = {
+			name : "John", 
+			surname : "Smith"
+		};
+
+		var newObj = Object.create(person, {
+			// foo is a regular 'value property'
+			foo: {
+				writable: true,
+				configurable: true,
+				value: 'hello'
+			},
+			// bar is a getter-and-setter (accessor) property
+			bar: {
+				configurable: false,
+				get: function() { return 10; },
+				set: function(value) {
+					console.log('Setting `o.bar` to', value);
+				}	
+			}
+		});
+
+
+		var developer = {
+			knownLanguage : "english"
+		};
+
+		Object.setPrototypeOf(developer, person);	
+
+		developer.isPrototypeOf(person);	//false
+		person.isPrototypeOf(developer);	//true
+
+
+		debugger;
+
+	</script>
+</body>
+</html>
