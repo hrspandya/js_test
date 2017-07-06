@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+	
+	function Person(name, surname){
+		this.name = name;
+		this.surname = surname;
+	}
+
+	var myMixin = {
+		getFullName : function(){
+			return this.name + " " + this.surname;
+		}
+	};
+
+	function augment(target, source){
+		for(var methodName in source){
+			if(source.hasOwnProperty(methodName)){
+				target[methodName] = source[methodName];
+			}
+		}
+	}
+
+	//extend
+	augment(Person.prototype, myMixin);
+
+	var p1 = new Person("John", "Smith");
+	console.log(p1.getFullName());
+
+</script>
+</body>
+</html>
