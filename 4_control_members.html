@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+
+
+<script type="text/javascript">
+	/*
+		preventExtensions, seal, freeze, can be used to control Member varibales / Prototype Variables and methods
+	*/
+
+	/*
+		=============preventExtensions (Addition not allowed but deletion/manipulation is allowed for member variables) ===========
+	*/
+
+	function Person(name, surname){
+		this.name = name;
+		this.surname = surname;
+		Object.preventExtensions(this);
+	}
+
+	Person.prototype.fullName = function(){
+		console.log(this.name + " " + this.surname);
+	}
+
+	var p1 = new Person("John", "Smith");
+	p1.fullName();
+
+	p1.test = "test";
+	console.log(p1.test);	//Extention on Member variable not Allowed 
+	
+	p1.fullName = "test";
+	p1.fullName();			//Extention on Prototype Variable/Method is not Allowed
+
+	p1.name = "test";		//manipulation is allowed only on member variables and methods
+	console.log(p1.name);
+
+	delete p1.fullName;
+	p1.fullName();			//But Deletion is allowed 
+
+
+	/*
+		=============SEAL (Only manipulation of memver variables is allowed)===========
+	*/
+
+	function Person2(name, surname){
+		this.name = name;
+		this.surname = surname;
+		Object.seal(this);
+	}
+
+	Person2.prototype.fullName = function(){
+		console.log(this.name + " " + this.surname);
+	}
+
+	var p2 = new Person2("John", "Smith");
+	
+	delete p2.name;		
+	console.log(p2.name);	//so delete is not allowed 
+
+	p2.name = "test";
+	console.log(p2.name);	//manipulation is allowed
+
+	p2.test = "test";
+	console.log(p2.test);	//addition is not allowed
+
+	p2.fullName = "test";
+	p2.fullName();
+
+
+
+	/*
+		============ Freeze (No Addtion/Modification/Deletion Allowed on member variables) =======
+	*/
+
+	function Person3(name, surname){
+		this.name = name;
+		this.surname = surname;
+		Object.freeze(this);
+	}
+
+	Person3.prototype.fullName = function(){
+		console.log(this.name + " " + this.surname);
+	}
+
+	var p3 = new Person3("John", "Smith");
+	
+	delete p3.name;		
+	console.log(p3.name);	//so delete is not allowed 
+
+	p3.name = "test";
+	console.log(p3.name);	//manipulation is allowed
+
+	p3.test = "test";
+	console.log(p3.test);	//addition is not allowed
+
+	p3.fullName = "test";
+	p3.fullName();
+
+
+
+
+
+</script>
+</body>
+</html>
