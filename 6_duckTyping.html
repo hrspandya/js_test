@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+	
+/*
+	=============================================
+	Javascript does not have the type matching which means you can pass anything and javascript will take it and 
+	compile it at run time. this can cause many issues.
+
+	For Example:  var employeeNames = []; You can push "John", Boolean , String, Object, 123 or even null, there is no stopping it.
+
+	To solve this issue we can use instanceof method at some point but it will also fail if you have multiple inheritance scenario.  
+
+	So what to do..  
+
+	Check out below examples
+*/
+	Object.prototype.isMethodImplemented = function(method){
+		return (method != null && this[method] != null && this[method] instanceof Function);
+	}
+
+	Object.prototype.isPropertyImplemented = function(property){
+		return (property != null && this[property] != null && !this[property] instanceof Function);
+	}
+
+
+	class Person{		
+		constructor(name, surname){
+			this.name = name;
+			this.surname = surname;
+		}
+	}
+
+	class Developer{
+		constructor(name, surname, knownLanguage){
+			Person.apply(this, arguments);
+			this.knownLanguage = knownLanguage;
+		}
+
+		writeCode(){
+			console.log("Write code");
+		}
+	}
+
+	class SoftwareComp{
+		constructor(){
+			this.employees = [];
+		}
+
+		hire(dev){
+			if(dev.isMethodImplemented("writeCode")){
+				this.employees.push(dev);
+			}else{
+				throw new Error("The Argument is not compatible with the required interface : name " + "writeCode");
+			}
+		}
+	}
+
+
+	
+
+
+</script>
+</body>
+</html>
