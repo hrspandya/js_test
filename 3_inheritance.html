@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<script type="text/javascript">
+	
+
+
+	/*
+		==================  Constructor Inheritance =================
+	*/
+
+	function Person1(name, surname){
+		this.name = name;
+		this.surname = surname;
+	}
+
+	Person1.prototype.fullName = function(){
+		return this.name +  " " + this.surname;
+ 	}
+
+
+ 	function Developer1(name, surname, knownLanguage){
+ 		Person1.apply(this, arguments);		//this line only inherites member variables and methods
+ 		this.knownLanguage = knownLanguage;
+ 	}
+
+ 	Developer1.prototype = Object.create(Person1.prototype);	////This code inherites prototytpe properties 
+ 	Developer1.prototype.constructor = Developer1;			//This code fixes the instanceOf issue for d1 object
+
+ 	Developer1.prototype.test = function(){
+ 		//do something
+ 	}
+  	
+
+ 	var d1 = new Developer1("John", "Smith", "English"); 	
+ 	console.log(d1.fullName());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/*
+		==================  ES6 =================
+	*/
+
+
+
+ 	class Person {
+ 		
+ 		constructor(name, surname){
+ 			var _age = 22;
+ 			var _calculateAge = function(){
+				console.log(_age);
+ 			}
+			_calculateAge();
+
+ 			this.name = name;
+ 			this.surname = surname;
+ 		}
+
+ 		get fullname(){
+			return this.name + " " + this.surname;
+ 		}
+
+ 		doWork(){
+ 			console.log("do something");
+ 		}
+ 	}
+
+ 	class Developer extends Person{
+
+ 		constructor(name, surname, knownLanguage){
+ 			super(name, surname);
+ 			this.knownLanguage = knownLanguage;
+ 		}
+
+		get fullname(){
+			return "Dev." + " " + super.fullname; 			
+ 		}
+
+ 		doWork(){
+ 			super.doWork();
+ 		}
+
+ 	}
+
+ 	debugger;
+ 	var p1 = new Person("Harsh", "Pandya");
+ 	console.log(p1.fullname);
+
+ 	var d1 = new Developer("John", "Smith", "English");
+ 	d1.doWork();
+ 	console.log(d1.fullname);
+ 	d1.fullname = "John Legend";
+ 	console.log(d1.fullname);
+
+</script>
+</body>
+</html>
